@@ -1,0 +1,288 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Дані про користувача</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f4f4f4;
+            margin: 0;
+            padding: 20px;
+            color: #333;
+        }
+
+        h2 {
+            text-align: center;
+            color: #4CAF50;
+            margin-bottom: 30px;
+        }
+
+        button {
+            display: block;
+            margin: 0 auto 30px;
+            padding: 15px 30px;
+            font-size: 18px;
+            color: white;
+            background-color: #4CAF50;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #45a049;
+        }
+
+        h3 {
+            color: #333;
+            border-bottom: 2px solid #4CAF50;
+            padding-bottom: 10px;
+            margin-top: 30px;
+        }
+
+        p {
+            background-color: white;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            margin-top: 10px;
+        }
+
+        video {
+            display: block;
+            margin: 20px auto;
+            border: 3px solid #4CAF50;
+            border-radius: 10px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            width: 100%;
+            max-width: 480px;
+        }
+
+        @media (max-width: 600px) {
+            button {
+                width: 100%;
+                padding: 15px;
+                font-size: 16px;
+            }
+
+            h2 {
+                font-size: 24px;
+            }
+
+            h3 {
+                font-size: 20px;
+            }
+
+            p {
+                font-size: 16px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<h2>Отримати всі можливі дані про користувача</h2>
+<button onclick="getAllUserData()">Отримати дані</button>
+
+<h3>Дані про місцезнаходження:</h3>
+<p id="location">Натисніть на кнопку, щоб отримати дані.</p>
+
+<h3>Інформація про пристрій і браузер:</h3>
+<p id="deviceInfo">Натисніть на кнопку, щоб отримати дані.</p>
+
+<h3>Дані про мережу:</h3>
+<p id="networkInfo">Натисніть на кнопку, щоб отримати дані.</p>
+
+<h3>Дані з сенсорів пристрою:</h3>
+<p id="sensorInfo">Натисніть на кнопку, щоб отримати дані.</p>
+
+<h3>Дані про заряд батареї:</h3>
+<p id="batteryInfo">Натисніть на кнопку, щоб отримати дані.</p>
+
+<h3>Інформація про оперативну пам'ять:</h3>
+<p id="memoryInfo">Натисніть на кнопку, щоб отримати дані.</p>
+
+<h3>Інформація про зберігання даних:</h3>
+<p id="storageInfo">Натисніть на кнопку, щоб отримати дані.</p>
+
+<h3>Перевірка дозволів:</h3>
+<p id="permissionsInfo">Натисніть на кнопку, щоб отримати дані.</p>
+
+<h3>Відео з камери:</h3>
+<video id="video" width="320" height="240" autoplay></video>
+
+<script>
+function getAllUserData() {
+    getLocation();
+    getDeviceInfo();
+    getNetworkInfo();
+    requestMediaAccess();
+    getDeviceOrientation();
+    getBatteryStatus();
+    getMemoryInfo();
+    getStorageInfo();
+    checkPermissions();
+}
+
+// Геолокація
+function getLocation() {
+    if (navigator.geolocation) {
+        navigator.geolocation.getCurrentPosition(showPosition, showError);
+    } else {
+        document.getElementById("location").innerHTML = "Геолокація не підтримується вашим браузером.";
+    }
+}
+
+function showPosition(position) {
+    var lat = position.coords.latitude;
+    var lon = position.coords.longitude;
+    var accuracy = position.coords.accuracy;
+    var altitude = position.coords.altitude !== null ? position.coords.altitude : "Невідомо";
+    var altitudeAccuracy = position.coords.altitudeAccuracy !== null ? position.coords.altitudeAccuracy : "Невідомо";
+    var heading = position.coords.heading !== null ? position.coords.heading : "Невідомо";
+    var speed = position.coords.speed !== null ? position.coords.speed : "Невідомо";
+
+    var locationInfo = `Широта: ${lat}<br>Довгота: ${lon}<br>Точність: ${accuracy} метрів<br>Висота: ${altitude} метрів<br>Точність висоти: ${altitudeAccuracy} метрів<br>Напрямок руху: ${heading} градусів<br>Швидкість: ${speed} м/с<br>`;
+    
+    document.getElementById("location").innerHTML = locationInfo;
+}
+
+function showError(error) {
+    switch(error.code) {
+        case error.PERMISSION_DENIED:
+            document.getElementById("location").innerHTML = "Користувач відхилив запит на геолокацію.";
+            break;
+        case error.POSITION_UNAVAILABLE:
+            document.getElementById("location").innerHTML = "Інформація про місцезнаходження недоступна.";
+            break;
+        case error.TIMEOUT:
+            document.getElementById("location").innerHTML = "Час запиту геолокації минув.";
+            break;
+        case error.UNKNOWN_ERROR:
+            document.getElementById("location").innerHTML = "Невідома помилка.";
+            break;
+    }
+}
+
+// Інформація про пристрій і браузер
+function getDeviceInfo() {
+    var deviceInfo = `
+        Назва браузера: ${navigator.appName}<br>
+        Версія браузера: ${navigator.appVersion}<br>
+        Мова браузера: ${navigator.language}<br>
+        Платформа: ${navigator.platform}<br>
+        Інформація про агент користувача: ${navigator.userAgent}<br>
+        Онлайн-статус: ${navigator.onLine ? "Онлайн" : "Офлайн"}<br>
+    `;
+    document.getElementById("deviceInfo").innerHTML = deviceInfo;
+}
+
+// Інформація про мережу
+function getNetworkInfo() {
+    if (navigator.connection) {
+        var networkInfo = `
+            Тип підключення: ${navigator.connection.effectiveType}<br>
+            Максимальна пропускна здатність: ${navigator.connection.downlink} Мбіт/с<br>
+            Затримка: ${navigator.connection.rtt} мс<br>
+            Чи є економія даних: ${navigator.connection.saveData ? "Так" : "Ні"}<br>
+        `;
+        document.getElementById("networkInfo").innerHTML = networkInfo;
+    } else {
+        document.getElementById("networkInfo").innerHTML = "Інформація про мережу недоступна.";
+    }
+}
+
+// Доступ до камери і мікрофона
+function requestMediaAccess() {
+    var video = document.getElementById("video");
+
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true })
+    .then(function(stream) {
+        // Відображення відеопотоку в елементі <video>
+        video.srcObject = stream;
+        video.play();
+    })
+    .catch(function(err) {
+        console.log("Помилка доступу до камери або мікрофона: " + err);
+    });
+}
+
+// Сенсори пристрою (орієнтація)
+function getDeviceOrientation() {
+    if (window.DeviceOrientationEvent) {
+        window.addEventListener("deviceorientation", function(event) {
+            var alpha = event.alpha;
+            var beta = event.beta;
+            var gamma = event.gamma;
+
+            var orientationInfo = `
+                Альфа (навколо осі Z): ${alpha}<br>
+                Бета (навколо осі X): ${beta}<br>
+                Гамма (навколо осі Y): ${gamma}<br>
+            `;
+            document.getElementById("sensorInfo").innerHTML = orientationInfo;
+        }, true);
+    } else {
+        document.getElementById("sensorInfo").innerHTML = "Пристрій не підтримує події орієнтації.";
+    }
+}
+
+// Battery Status API
+function getBatteryStatus() {
+    if (navigator.getBattery) {
+        navigator.getBattery().then(function(battery) {
+            var batteryInfo = `
+                Рівень заряду: ${battery.level * 100}%<br>
+                Заряджається: ${battery.charging ? "Так" : "Ні"}<br>
+                Час до повного зарядження: ${battery.chargingTime} секунд<br>
+                Час до повного розрядження: ${battery.dischargingTime} секунд<br>
+            `;
+            document.getElementById("batteryInfo").innerHTML = batteryInfo;
+        });
+    } else {
+        document.getElementById("batteryInfo").innerHTML = "Battery Status API не підтримується.";
+    }
+}
+
+// Device Memory API
+function getMemoryInfo() {
+    if (navigator.deviceMemory) {
+        document.getElementById("memoryInfo").innerHTML = `Оперативна пам'ять: ${navigator.deviceMemory} GB`;
+    } else {
+        document.getElementById("memoryInfo").innerHTML = "Device Memory API не підтримується.";
+    }
+}
+
+// Storage API
+function getStorageInfo() {
+    if (navigator.storage && navigator.storage.estimate) {
+        navigator.storage.estimate().then(function(estimate) {
+            var storageInfo = `
+                Загальний простір: ${estimate.quota} байт<br>
+                Використаний простір: ${estimate.usage} байт<br>
+            `;
+            document.getElementById("storageInfo").innerHTML = storageInfo;
+        });
+    } else {
+        document.getElementById("storageInfo").innerHTML = "Storage API не підтримується.";
+    }
+}
+
+// Permissions API
+function checkPermissions() {
+    if (navigator.permissions) {
+        navigator.permissions.query({name: 'geolocation'}).then(function(result) {
+            document.getElementById("permissionsInfo").innerHTML = `Геолокація: ${result.state}`;
+        });
+    } else {
+        document.getElementById("permissionsInfo").innerHTML = "Permissions API не підтримується.";
+    }
+}
+</script>
+
+</body>
+</html>
